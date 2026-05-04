@@ -1,0 +1,74 @@
+{
+  "result": [
+    {
+      "sys_id": "ent_cmdb_001",
+      "name": "IT Service Management Professional",
+      "product_code": "PROD18249",
+      "entitlement_id": "ENT-PROD18249",
+      "parent_entitlement_id": null,
+      "entitlement_model": "named_user",
+      "meter_type": "Fulfiller",
+      "unit_of_meter": "User",
+      "purchased_count": "100",
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31",
+      "status": "active"
+    },
+    {
+      "sys_id": "ent_csm_001",
+      "name": "Customer Service Management",
+      "product_code": "PROD17161",
+      "entitlement_id": "ENT-PROD17161",
+      "parent_entitlement_id": null,
+      "entitlement_model": "named_user",
+      "meter_type": "Fulfiller",
+      "unit_of_meter": "User",
+      "purchased_count": "100",
+      "start_date": "2026-01-01",
+      "end_date": "2026-09-30",
+      "status": "active"
+    },
+    {
+      "sys_id": "ent_itom_001",
+      "name": "IT Operations Management Visibility",
+      "product_code": "PROD90000",
+      "entitlement_id": "ENT-PROD90000",
+      "parent_entitlement_id": null,
+      "entitlement_model": "subscription_unit",
+      "meter_type": "Node",
+      "unit_of_meter": "Node",
+      "purchased_count": "240",
+      "start_date": "2026-01-01",
+      "end_date": "2026-06-25",
+      "status": "active"
+    },
+    {
+      "sys_id": "ent_hr_001",
+      "name": "HR Service Delivery",
+      "product_code": "PROD77777",
+      "entitlement_id": "ENT-PROD77777",
+      "parent_entitlement_id": null,
+      "entitlement_model": "named_user",
+      "meter_type": "Employee",
+      "unit_of_meter": "User",
+      "purchased_count": "100",
+      "start_date": "2025-05-01",
+      "end_date": "2026-05-20",
+      "status": "active"
+    },
+    {
+      "sys_id": "ent_app_001",
+      "name": "App Engine",
+      "product_code": "PROD55555",
+      "entitlement_id": "ENT-PROD55555",
+      "parent_entitlement_id": null,
+      "entitlement_model": "custom_table",
+      "meter_type": "Custom Table",
+      "unit_of_meter": "Table",
+      "purchased_count": "120",
+      "start_date": "2026-02-01",
+      "end_date": "2027-02-01",
+      "status": "active"
+    }
+  ]
+}

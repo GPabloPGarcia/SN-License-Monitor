@@ -1,0 +1,69 @@
+{
+  "result": [
+    {
+      "sys_id": "ov_cmdb_001",
+      "allocated_count": "93",
+      "purchased_count": "100",
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31",
+      "status": "active",
+      "subscription": {
+        "value": "ent_cmdb_001",
+        "link": "https://mock.service-now.com/api/now/table/subscription_entitlement/ent_cmdb_001"
+      },
+      "subscription_type": "production"
+    },
+    {
+      "sys_id": "ov_csm_001",
+      "allocated_count": "105",
+      "purchased_count": "100",
+      "start_date": "2026-01-01",
+      "end_date": "2026-09-30",
+      "status": "active",
+      "subscription": {
+        "value": "ent_csm_001",
+        "link": "https://mock.service-now.com/api/now/table/subscription_entitlement/ent_csm_001"
+      },
+      "subscription_type": "production"
+    },
+    {
+      "sys_id": "ov_itom_001",
+      "allocated_count": "180",
+      "purchased_count": "240",
+      "start_date": "2026-01-01",
+      "end_date": "2026-06-25",
+      "status": "active",
+      "subscription": {
+        "value": "ent_itom_001",
+        "link": "https://mock.service-now.com/api/now/table/subscription_entitlement/ent_itom_001"
+      },
+      "subscription_type": "production"
+    },
+    {
+      "sys_id": "ov_hr_001",
+      "allocated_count": "68",
+      "purchased_count": "100",
+      "start_date": "2025-05-01",
+      "end_date": "2026-05-20",
+      "status": "active",
+      "subscription": {
+        "value": "ent_hr_001",
+        "link": "https://mock.service-now.com/api/now/table/subscription_entitlement/ent_hr_001"
+      },
+      "subscription_type": "production"
+    },
+    {
+      "sys_id": "ov_app_001",
+      "allocated_count": "40",
+      "purchased_count": "120",
+      "start_date": "2026-02-01",
+      "end_date": "2027-02-01",
+      "status": "active",
+      "subscription": {
+        "value": "ent_app_001",
+        "link": "https://mock.service-now.com/api/now/table/subscription_entitlement/ent_app_001"
+      },
+      "subscription_type": "production"
+    }
+  ]
+}

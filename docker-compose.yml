@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sn-license-monitor-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sn_license
+      POSTGRES_PASSWORD: sn_license
+      POSTGRES_DB: sn_license_hub
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sn_license -d sn_license_hub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: sn_license_intelligence_hub_pgdata
