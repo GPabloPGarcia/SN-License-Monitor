@@ -32,6 +32,10 @@ export async function loginAction(
     return { error: "Credenciais invalidas." };
   }
 
+  if (!user.active) {
+    return { error: "Usuario desativado. Fale com um administrador." };
+  }
+
   const validPassword = await verifyPassword(password, user.passwordHash);
   if (!validPassword) {
     return { error: "Credenciais invalidas." };

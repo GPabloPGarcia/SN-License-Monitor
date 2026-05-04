@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { Edit, Plus } from "lucide-react";
+import {
+  DeleteUserButton,
+  ToggleUserActiveButton
+} from "@/components/actions/user-action-buttons";
 import { SearchParamToast } from "@/components/feedback/search-param-toast";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -20,12 +24,13 @@ import { formatDateTime } from "@/lib/utils";
 export default async function UsersPage() {
   await requireAdmin();
   const users = await prisma.user.findMany({
-    orderBy: [{ role: "asc" }, { name: "asc" }],
+    orderBy: [{ active: "desc" }, { role: "asc" }, { name: "asc" }],
     select: {
       id: true,
       name: true,
       email: true,
       role: true,
+      active: true,
       createdAt: true,
       updatedAt: true
     }
@@ -55,6 +60,7 @@ export default async function UsersPage() {
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Perfil</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Criado em</TableHead>
               <TableHead>Atualizado em</TableHead>
               <TableHead className="text-right">Acoes</TableHead>
@@ -63,7 +69,7 @@ export default async function UsersPage() {
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   Nenhum usuario cadastrado.
                 </TableCell>
               </TableRow>
@@ -79,16 +85,23 @@ export default async function UsersPage() {
                       {user.role}
                     </Badge>
                   </TableCell>
+                  <TableCell>
+                    <Badge variant={user.active ? "low" : "outline"}>
+                      {user.active ? "ATIVO" : "INATIVO"}
+                    </Badge>
+                  </TableCell>
                   <TableCell>{formatDateTime(user.createdAt)}</TableCell>
                   <TableCell>{formatDateTime(user.updatedAt)}</TableCell>
                   <TableCell>
-                    <div className="flex justify-end">
+                    <div className="flex flex-wrap justify-end gap-2">
                       <Button asChild variant="outline" size="sm">
                         <Link href={`/users/${user.id}/edit`}>
                           <Edit className="h-4 w-4" />
                           Editar
                         </Link>
                       </Button>
+                      <ToggleUserActiveButton userId={user.id} active={user.active} />
+                      <DeleteUserButton userId={user.id} userName={user.name} />
                     </div>
                   </TableCell>
                 </TableRow>

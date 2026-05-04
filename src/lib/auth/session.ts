@@ -48,13 +48,16 @@ export async function getSessionUser() {
         id: true,
         name: true,
         email: true,
-        role: true
+        role: true,
+        active: true
       }
     });
 
-    return user
+    return user?.active
       ? ({
-          ...user,
+          id: user.id,
+          name: user.name,
+          email: user.email,
           role: user.role
         } satisfies SessionUser)
       : null;

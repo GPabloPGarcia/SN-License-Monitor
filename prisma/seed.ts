@@ -10,23 +10,36 @@ const prodespInstances = [
   "pdspjcsp"
 ];
 
+function getRequiredSeedValue(key: string) {
+  const value = process.env[key]?.trim();
+
+  if (value) {
+    return value;
+  }
+
+  throw new Error(`${key} e obrigatorio para executar seed.`);
+}
+
 async function main() {
-  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@example.com";
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "Admin@123456";
+  const adminName = getRequiredSeedValue("SEED_ADMIN_NAME");
+  const adminEmail = getRequiredSeedValue("SEED_ADMIN_EMAIL");
+  const adminPassword = getRequiredSeedValue("SEED_ADMIN_PASSWORD");
   const passwordHash = await bcrypt.hash(adminPassword, 12);
 
   await prisma.user.upsert({
     where: { email: adminEmail },
     update: {
-      name: process.env.SEED_ADMIN_NAME ?? "Administrator",
+      name: adminName,
       passwordHash,
-      role: UserRole.ADMIN
+      role: UserRole.ADMIN,
+      active: true
     },
     create: {
-      name: process.env.SEED_ADMIN_NAME ?? "Administrator",
+      name: adminName,
       email: adminEmail,
       passwordHash,
-      role: UserRole.ADMIN
+      role: UserRole.ADMIN,
+      active: true
     }
   });
 

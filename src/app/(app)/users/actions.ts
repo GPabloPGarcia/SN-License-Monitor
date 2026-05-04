@@ -4,7 +4,7 @@ import { Prisma, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { assertAdmin } from "@/lib/auth/session";
+import { assertAdmin, clearSession } from "@/lib/auth/session";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/prisma/client";
 
@@ -39,6 +39,48 @@ function formatUserError(error: unknown) {
   throw error;
 }
 
+function redirectWithUserError(message: string): never {
+  redirect(`/users?error=${encodeURIComponent(message)}`);
+}
+
+async function getUserForAdminAction(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      role: true,
+      active: true
+    }
+  });
+
+  if (!user) {
+    redirectWithUserError("Usuario nao encontrado.");
+  }
+
+  return user;
+}
+
+async function assertCanRemoveActiveAdmin(userId: string) {
+  const user = await getUserForAdminAction(userId);
+
+  if (user.role !== UserRole.ADMIN || !user.active) {
+    return user;
+  }
+
+  const activeAdminCount = await prisma.user.count({
+    where: {
+      role: UserRole.ADMIN,
+      active: true
+    }
+  });
+
+  if (activeAdminCount <= 1) {
+    redirectWithUserError("Mantenha pelo menos um administrador ativo cadastrado.");
+  }
+
+  return user;
+}
+
 async function assertCanChangeRole(userId: string, nextRole: UserRole) {
   if (nextRole === UserRole.ADMIN) {
     return;
@@ -46,19 +88,22 @@ async function assertCanChangeRole(userId: string, nextRole: UserRole) {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { role: true }
+    select: { role: true, active: true }
   });
 
-  if (user?.role !== UserRole.ADMIN) {
+  if (user?.role !== UserRole.ADMIN || !user.active) {
     return;
   }
 
   const adminCount = await prisma.user.count({
-    where: { role: UserRole.ADMIN }
+    where: {
+      role: UserRole.ADMIN,
+      active: true
+    }
   });
 
   if (adminCount <= 1) {
-    throw new Error("Mantenha pelo menos um administrador cadastrado.");
+    redirectWithUserError("Mantenha pelo menos um administrador ativo cadastrado.");
   }
 }
 
@@ -77,7 +122,8 @@ export async function createUserAction(formData: FormData) {
         name: data.name,
         email: data.email,
         passwordHash: await hashPassword(data.password),
-        role: data.role
+        role: data.role,
+        active: true
       }
     });
   } catch (error) {
@@ -122,4 +168,47 @@ export async function updateUserAction(userId: string, formData: FormData) {
   revalidatePath("/users");
   revalidatePath(`/users/${userId}/edit`);
   redirect("/users?toast=user-updated");
+}
+
+export async function toggleUserActiveAction(userId: string) {
+  const currentUser = await assertAdmin();
+  const user = await getUserForAdminAction(userId);
+  const nextActive = !user.active;
+
+  if (!nextActive) {
+    await assertCanRemoveActiveAdmin(userId);
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { active: nextActive }
+  });
+
+  revalidatePath("/users");
+  revalidatePath(`/users/${userId}/edit`);
+
+  if (currentUser.id === userId && !nextActive) {
+    await clearSession();
+    redirect("/login");
+  }
+
+  redirect(`/users?toast=${nextActive ? "user-activated" : "user-deactivated"}`);
+}
+
+export async function deleteUserAction(userId: string) {
+  const currentUser = await assertAdmin();
+  await assertCanRemoveActiveAdmin(userId);
+
+  await prisma.user.delete({
+    where: { id: userId }
+  });
+
+  revalidatePath("/users");
+
+  if (currentUser.id === userId) {
+    await clearSession();
+    redirect("/login");
+  }
+
+  redirect("/users?toast=user-deleted");
 }
