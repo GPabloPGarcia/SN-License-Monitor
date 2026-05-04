@@ -14,6 +14,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname === "/logout") {
+    return NextResponse.next();
+  }
+
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const session = token
     ? await verifySessionToken(token).catch(() => null)
