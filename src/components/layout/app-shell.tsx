@@ -9,6 +9,7 @@ import {
   Database,
   History,
   LogOut,
+  ScrollText,
   ShieldAlert,
   Server,
   Settings,
@@ -35,6 +36,7 @@ const navItems = [
   { href: "/licenses", label: "Licencas", icon: ShieldAlert },
   { href: "/collector-runs", label: "Coletas", icon: History },
   { href: "/users", label: "Usuarios", icon: Users, adminOnly: true },
+  { href: "/logs", label: "Logs", icon: ScrollText, adminOnly: true },
   { href: "/settings", label: "Configuracoes", icon: Settings }
 ];
 
@@ -47,8 +49,32 @@ const breadcrumbLabels: Record<string, string> = {
   "collector-runs": "Coletas",
   users: "Usuarios",
   settings: "Configuracoes",
-  edit: "Editar"
+  edit: "Editar",
+  logs: "Logs"
 };
+
+const entityDetailLabels: Record<string, string> = {
+  clients: "Detalhe do Cliente",
+  instances: "Detalhe da Instancia",
+  licenses: "Detalhe da Licenca",
+  users: "Detalhe do Usuario",
+  "collector-runs": "Detalhe da Coleta"
+};
+
+const CUID_PATTERN = /^c[a-z0-9]{20,}$/;
+
+function isId(segment: string): boolean {
+  return CUID_PATTERN.test(segment);
+}
+
+function getBreadcrumbLabel(parts: string[], index: number): string {
+  const part = parts[index];
+  if (breadcrumbLabels[part]) return breadcrumbLabels[part];
+  if (isId(part) && index > 0) {
+    return entityDetailLabels[parts[index - 1]] ?? "Detalhe";
+  }
+  return part;
+}
 
 function Breadcrumb() {
   const pathname = usePathname();
@@ -58,12 +84,19 @@ function Breadcrumb() {
     <nav className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
       {parts.map((part, index) => {
         const isLast = index === parts.length - 1;
+        const label = getBreadcrumbLabel(parts, index);
+        const href = "/" + parts.slice(0, index + 1).join("/");
+
         return (
           <span key={`${part}-${index}`} className="flex min-w-0 items-center gap-1">
             {index > 0 ? <ChevronRight className="h-4 w-4 shrink-0" /> : null}
-            <span className={cn(isLast && "font-medium text-foreground")}>
-              {breadcrumbLabels[part] ?? part}
-            </span>
+            {isLast ? (
+              <span className="truncate font-medium text-foreground">{label}</span>
+            ) : (
+              <Link href={href} className="truncate hover:text-foreground">
+                {label}
+              </Link>
+            )}
           </span>
         );
       })}
