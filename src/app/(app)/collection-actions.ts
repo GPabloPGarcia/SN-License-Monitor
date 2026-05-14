@@ -78,7 +78,7 @@ export async function testInstanceConnectionAction(instanceId: string) {
       throw new Error("Instancia nao encontrada.");
     }
 
-    return new ServiceNowLicenseCollector().testConnection(instance);
+    return await new ServiceNowLicenseCollector().testConnection(instance);
   } catch (error) {
     return resultFromError(error);
   }
