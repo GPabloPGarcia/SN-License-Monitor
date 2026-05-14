@@ -244,3 +244,5 @@ npm run db:seed
 ```
 
 Depois tente entrar com o usuario definido em `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD`.
+
+### SN-License Monitor
