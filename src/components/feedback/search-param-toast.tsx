@@ -7,8 +7,10 @@ import { toast } from "sonner";
 const messages: Record<string, string> = {
   "client-created": "Cliente criado com sucesso.",
   "client-updated": "Cliente atualizado com sucesso.",
+  "client-deleted": "Cliente excluido com sucesso.",
   "instance-created": "Instancia criada com sucesso.",
   "instance-updated": "Instancia atualizada com sucesso.",
+  "instance-deleted": "Instancia excluida com sucesso.",
   "user-created": "Usuario criado com sucesso.",
   "user-updated": "Usuario atualizado com sucesso.",
   "user-activated": "Usuario ativado com sucesso.",

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { Edit, Plus } from "lucide-react";
+import { toggleClientActiveAction } from "@/app/(app)/clients/actions";
+import { DeleteClientButton } from "@/components/actions/resource-action-buttons";
 import { SearchParamToast } from "@/components/feedback/search-param-toast";
 import { PageHeader } from "@/components/layout/page-header";
 import { StatusBadge } from "@/components/status/status-badge";
@@ -13,7 +15,6 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { toggleClientActiveAction } from "@/app/(app)/clients/actions";
 import { ClientRepository } from "@/repositories/ClientRepository";
 import { requireAuth } from "@/lib/auth/session";
 import { formatDateTime } from "@/lib/utils";
@@ -91,6 +92,7 @@ export default async function ClientsPage() {
                               {client.active ? "Desativar" : "Ativar"}
                             </Button>
                           </form>
+                          <DeleteClientButton clientId={client.id} clientName={client.name} />
                         </>
                       ) : (
                         <Button asChild variant="outline" size="sm">

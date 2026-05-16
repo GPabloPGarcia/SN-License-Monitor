@@ -8,11 +8,13 @@ import { Label } from "@/components/ui/label";
 export function InstanceForm({
   instance,
   clients,
-  action
+  action,
+  defaultClientId
 }: {
   instance?: ServiceNowInstance;
   clients: Client[];
   action: (formData: FormData) => void | Promise<void>;
+  defaultClientId?: string;
 }) {
   return (
     <form action={action} className="max-w-2xl space-y-5">
@@ -21,7 +23,7 @@ export function InstanceForm({
         <select
           id="clientId"
           name="clientId"
-          defaultValue={instance?.clientId ?? clients[0]?.id}
+          defaultValue={instance?.clientId ?? defaultClientId ?? clients[0]?.id}
           required
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
         >

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, Search, X } from "lucide-react";
+import { PlatformStatusBadge } from "@/components/status/platform-status-badge";
 import { RiskBadge } from "@/components/status/risk-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,7 +69,6 @@ function SortIcon({
 const COLUMNS: { key: SortKey; label: string }[] = [
   { key: "name", label: "Nome" },
   { key: "productCode", label: "Product Code" },
-  { key: "meterType", label: "Meter Type" },
   { key: "purchased", label: "Comprado" },
   { key: "allocated", label: "Alocado" },
   { key: "available", label: "Disponivel" },
@@ -159,7 +159,7 @@ export function LicenseTable({ licenses }: { licenses: LicenseTableItem[] }) {
         <TableBody>
           {displayed.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={11} className="text-center text-muted-foreground">
+              <TableCell colSpan={10} className="text-center text-muted-foreground">
                 {query
                   ? "Nenhuma licenca encontrada para esse filtro."
                   : "Nenhuma licenca encontrada."}
@@ -174,12 +174,11 @@ export function LicenseTable({ licenses }: { licenses: LicenseTableItem[] }) {
                   </Link>
                 </TableCell>
                 <TableCell>{license.productCode}</TableCell>
-                <TableCell>{license.meterType ?? "-"}</TableCell>
                 <TableCell>{formatNumber(license.purchased)}</TableCell>
                 <TableCell>{formatNumber(license.allocated)}</TableCell>
                 <TableCell>{formatNumber(license.available)}</TableCell>
                 <TableCell>{formatPercent(license.usagePercent)}</TableCell>
-                <TableCell>{license.status ?? "-"}</TableCell>
+                <TableCell><PlatformStatusBadge status={license.status} /></TableCell>
                 <TableCell>
                   <RiskBadge riskLevel={license.riskLevel} />
                 </TableCell>

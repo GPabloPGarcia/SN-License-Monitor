@@ -1,5 +1,5 @@
 import type { LicenseWeeklySnapshot, RiskLevel } from "@prisma/client";
-import { getPreviousWeekReference, getWeekReference } from "@/lib/dates/weeks";
+import { calculateDaysToExpire, getPreviousWeekReference, getWeekReference } from "@/lib/dates/weeks";
 import { prisma } from "@/lib/prisma/client";
 import {
   compareInstanceSnapshots,
@@ -15,6 +15,18 @@ const riskOrder: Record<RiskLevel, number> = {
 
 function usageOf(snapshot: LicenseWeeklySnapshot) {
   return snapshot.usagePercent ?? snapshot.licenseUsagePercent ?? null;
+}
+
+function daysToExpireOf(snapshot: LicenseWeeklySnapshot, now: Date) {
+  if (snapshot.endDate) {
+    return calculateDaysToExpire(snapshot.endDate, now);
+  }
+  return snapshot.daysToExpire ?? null;
+}
+
+function isExpiringSoon(snapshot: LicenseWeeklySnapshot, now: Date, days: number) {
+  const dte = daysToExpireOf(snapshot, now);
+  return dte !== null && dte >= 0 && dte <= days;
 }
 
 function averageUsage(snapshots: LicenseWeeklySnapshot[]) {
@@ -50,6 +62,7 @@ export class DashboardService {
     const weekReference = getWeekReference();
     const previousWeekReference = getPreviousWeekReference();
 
+    const now = new Date();
     const [
       activeClients,
       activeInstances,
@@ -105,9 +118,7 @@ export class DashboardService {
       highRiskLicenses: currentSnapshots.filter((item) => item.riskLevel === "HIGH").length,
       above90: countAbove(currentSnapshots, 90),
       above100: countAbove(currentSnapshots, 100),
-      expiring30: currentSnapshots.filter(
-        (item) => item.daysToExpire !== null && item.daysToExpire <= 30
-      ).length,
+      expiring30: currentSnapshots.filter((item) => isExpiringSoon(item, now, 30)).length,
       lastGeneralRun: lastGeneralRun
         ? {
             status: lastGeneralRun.status,
@@ -239,6 +250,7 @@ export class DashboardService {
       return null;
     }
 
+    const now = new Date();
     const [currentSnapshots, previousSnapshots, allSnapshots, lastRun] =
       await Promise.all([
         prisma.licenseWeeklySnapshot.findMany({
@@ -277,9 +289,7 @@ export class DashboardService {
       lastRun,
       totalLicenses: currentSnapshots.length,
       criticalLicenses: currentSnapshots.filter((snapshot) => snapshot.riskLevel === "CRITICAL").length,
-      expiringLicenses: currentSnapshots.filter(
-        (snapshot) => snapshot.daysToExpire !== null && snapshot.daysToExpire <= 30
-      ).length,
+      expiringLicenses: currentSnapshots.filter((snapshot) => isExpiringSoon(snapshot, now, 30)).length,
       averageUsage: averageUsage(currentSnapshots),
       comparison: compareInstanceSnapshots(currentSnapshots, previousSnapshots),
       licenses: currentSnapshots.map((snapshot) => ({
