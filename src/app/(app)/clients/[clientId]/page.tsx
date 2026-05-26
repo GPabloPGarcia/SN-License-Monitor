@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Edit } from "lucide-react";
+import { Edit, Plus } from "lucide-react";
 import { executeClientCollectionAction } from "@/app/(app)/collection-actions";
 import { RunCollectionButton } from "@/components/actions/run-collection-button";
 import { KpiCard } from "@/components/cards/kpi-card";
@@ -60,6 +60,12 @@ export default async function ClientDashboardPage({
                   label="Executar coleta do cliente"
                   action={executeClientCollectionAction.bind(null, summary.client.id)}
                 />
+                <Button asChild variant="outline">
+                  <Link href={`/instances/new?clientId=${summary.client.id}`}>
+                    <Plus className="h-4 w-4" />
+                    Nova instancia
+                  </Link>
+                </Button>
                 <Button asChild variant="outline">
                   <Link href={`/clients/${summary.client.id}/edit`}>
                     <Edit className="h-4 w-4" />

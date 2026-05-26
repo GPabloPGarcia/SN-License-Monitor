@@ -75,10 +75,13 @@ export default async function LicensesPage({
     ];
   }
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   if (expiringDays !== null && Number.isFinite(expiringDays)) {
-    where.daysToExpire = {
-      lte: expiringDays
-    };
+    const cutoff = new Date(today);
+    cutoff.setDate(cutoff.getDate() + expiringDays);
+    where.endDate = { gte: today, lte: cutoff };
   }
 
   const [licenses, totals] = await Promise.all([
@@ -99,7 +102,8 @@ export default async function LicensesPage({
         riskLevel: true,
         usagePercent: true,
         licenseUsagePercent: true,
-        daysToExpire: true
+        daysToExpire: true,
+        endDate: true
       }
     })
   ]);
@@ -119,13 +123,19 @@ export default async function LicensesPage({
     weeklyVariation: null
   }));
 
+  const cutoff30 = new Date(today);
+  cutoff30.setDate(cutoff30.getDate() + 30);
+
   const critical = totals.filter((item) => item.riskLevel === "CRITICAL").length;
   const high = totals.filter((item) => item.riskLevel === "HIGH").length;
   const above90 = totals.filter(
     (item) => (item.usagePercent ?? item.licenseUsagePercent ?? 0) >= 90
   ).length;
   const expiring30 = totals.filter(
-    (item) => item.daysToExpire !== null && item.daysToExpire <= 30
+    (item) =>
+      item.endDate !== null &&
+      item.endDate >= today &&
+      item.endDate <= cutoff30
   ).length;
 
   return (

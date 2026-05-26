@@ -4,9 +4,16 @@ import { PageHeader } from "@/components/layout/page-header";
 import { requireAdmin } from "@/lib/auth/session";
 import { ClientRepository } from "@/repositories/ClientRepository";
 
-export default async function NewInstancePage() {
+export default async function NewInstancePage({
+  searchParams
+}: {
+  searchParams: Promise<{ clientId?: string }>;
+}) {
   await requireAdmin();
-  const clients = await ClientRepository.listActive();
+  const [clients, params] = await Promise.all([
+    ClientRepository.listActive(),
+    searchParams
+  ]);
 
   return (
     <>
@@ -14,7 +21,11 @@ export default async function NewInstancePage() {
         title="Nova instancia"
         description="Cadastre uma instancia ServiceNow vinculada a um cliente ativo."
       />
-      <InstanceForm clients={clients} action={createInstanceAction} />
+      <InstanceForm
+        clients={clients}
+        action={createInstanceAction}
+        defaultClientId={params.clientId}
+      />
     </>
   );
 }

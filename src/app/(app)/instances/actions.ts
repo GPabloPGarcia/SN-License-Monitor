@@ -96,3 +96,18 @@ export async function toggleInstanceActiveAction(id: string) {
   revalidatePath(`/instances/${id}`);
   revalidatePath(`/clients/${instance.clientId}`);
 }
+
+export async function deleteInstanceAction(id: string) {
+  await assertAdmin();
+  const instance = await prisma.serviceNowInstance.findUnique({ where: { id } });
+
+  if (!instance) {
+    throw new Error("Instancia nao encontrada.");
+  }
+
+  await prisma.serviceNowInstance.delete({ where: { id } });
+
+  revalidatePath("/instances");
+  revalidatePath(`/clients/${instance.clientId}`);
+  redirect("/instances?toast=instance-deleted");
+}

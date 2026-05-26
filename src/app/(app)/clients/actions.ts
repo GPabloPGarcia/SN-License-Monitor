@@ -62,3 +62,12 @@ export async function toggleClientActiveAction(id: string) {
   revalidatePath("/clients");
   revalidatePath(`/clients/${id}`);
 }
+
+export async function deleteClientAction(id: string) {
+  await assertAdmin();
+
+  await prisma.client.delete({ where: { id } });
+
+  revalidatePath("/clients");
+  redirect("/clients?toast=client-deleted");
+}

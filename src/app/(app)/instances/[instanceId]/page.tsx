@@ -41,20 +41,30 @@ export default async function InstanceDashboardPage({
   }
 
   const isAdmin = user.role === "ADMIN";
-  const licenseRows: LicenseTableItem[] = summary.licenses.map(({ snapshot, comparison }) => ({
-    id: snapshot.id,
-    name: snapshot.licenseName ?? snapshot.entitlementName ?? snapshot.productCode,
-    productCode: snapshot.productCode,
-    meterType: snapshot.meterType,
-    purchased: snapshot.purchasedCount ?? snapshot.licenseCount,
-    allocated: snapshot.allocatedCount ?? snapshot.licenseAllocated,
-    available: snapshot.availableCount ?? snapshot.licenseAvailable,
-    usagePercent: snapshot.usagePercent ?? snapshot.licenseUsagePercent,
-    status: snapshot.allocatedStatus ?? snapshot.overviewStatus,
-    riskLevel: snapshot.riskLevel,
-    endDate: snapshot.endDate?.toISOString() ?? null,
-    weeklyVariation: comparison.usageDelta
-  }));
+  const licenseRows: LicenseTableItem[] = summary.licenses.map(({ snapshot, comparison }) => {
+    const usagePct = snapshot.usagePercent ?? snapshot.licenseUsagePercent;
+    const alloc = snapshot.allocatedCount ?? snapshot.licenseAllocated;
+    const purch = snapshot.purchasedCount ?? snapshot.licenseCount;
+    const hasData = usagePct !== null || (alloc !== null && purch !== null);
+    const isOver =
+      (usagePct !== null && usagePct >= 100) ||
+      (alloc !== null && purch !== null && purch > 0 && alloc > purch);
+
+    return {
+      id: snapshot.id,
+      name: snapshot.licenseName ?? snapshot.entitlementName ?? snapshot.productCode,
+      productCode: snapshot.productCode,
+      meterType: snapshot.meterType,
+      purchased: purch,
+      allocated: alloc,
+      available: snapshot.availableCount ?? snapshot.licenseAvailable,
+      usagePercent: usagePct,
+      status: hasData ? (isOver ? "Over-Allocated" : "Compliant") : (snapshot.allocatedStatus ?? snapshot.overviewStatus),
+      riskLevel: snapshot.riskLevel,
+      endDate: snapshot.endDate?.toISOString() ?? null,
+      weeklyVariation: comparison.usageDelta
+    };
+  });
 
   return (
     <>
