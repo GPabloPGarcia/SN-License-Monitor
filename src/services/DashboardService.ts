@@ -359,19 +359,6 @@ export class DashboardService {
         week: weekLabel(item.weekReference),
         purchased: item.licenseCount ?? item.purchasedCount ?? 0,
         allocated: item.licenseAllocated ?? item.allocatedCount ?? 0
-      })),
-      usageSeries: history.map((item) => ({
-        week: weekLabel(item.weekReference),
-        usagePercent: usageOf(item) ?? 0
-      })),
-      availableSeries: history.map((item) => ({
-        week: weekLabel(item.weekReference),
-        available: item.licenseAvailable ?? item.availableCount ?? 0
-      })),
-      riskHistory: history.map((item) => ({
-        week: weekLabel(item.weekReference),
-        risk: item.riskLevel,
-        value: riskOrder[item.riskLevel]
       }))
     };
   }

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell([System.Environment]::SetEnvironmentVariable\\(\"PATH\", $env:PATH + \";C:\\\\Program Files\\\\PostgreSQL\\\\16\\\\bin\", [System.EnvironmentVariableTarget]::User\\))"
+    ]
+  }
+}

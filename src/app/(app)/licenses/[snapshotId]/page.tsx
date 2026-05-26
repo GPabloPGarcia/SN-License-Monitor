@@ -1,9 +1,6 @@
 import { notFound } from "next/navigation";
 import { KpiCard } from "@/components/cards/kpi-card";
-import {
-  MultiLineChart,
-  SimpleBarChart
-} from "@/components/charts/dashboard-charts";
+import { MultiLineChart } from "@/components/charts/dashboard-charts";
 import { PageHeader } from "@/components/layout/page-header";
 import { RiskBadge } from "@/components/status/risk-badge";
 import {
@@ -143,32 +140,12 @@ export default async function LicenseDetailPage({
         </Card>
       </div>
 
-      <div className="mt-6 grid gap-4 xl:grid-cols-2">
+      <div className="mt-6">
         <MultiLineChart
           title="Evolucao semanal de comprado x alocado"
           data={detail.purchasedAllocatedSeries}
           xKey="week"
           lines={["purchased", "allocated"]}
-        />
-        <SimpleBarChart
-          title="Evolucao semanal de usagePercent"
-          data={detail.usageSeries}
-          xKey="week"
-          yKey="usagePercent"
-        />
-        <SimpleBarChart
-          title="Evolucao semanal de disponivel"
-          data={detail.availableSeries}
-          xKey="week"
-          yKey="available"
-          color="#0CA678"
-        />
-        <SimpleBarChart
-          title="Historico de riskLevel"
-          data={detail.riskHistory}
-          xKey="week"
-          yKey="value"
-          color="#339AF0"
         />
       </div>
 
